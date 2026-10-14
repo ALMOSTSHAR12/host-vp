@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <title>لوحة المسؤول - VPS DARK</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: linear-gradient(135deg, #0a0a1a 0%, #0a0a2a 100%);
+      color: #fff;
+      min-height: 100vh;
+    }
+    
+    /* خلفية متحركة */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 3s infinite;
+    }
+    
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; transform: scale(0.5); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+    
+    .topbar {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #ffd700;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      background: linear-gradient(90deg, #ffd700, #ffa500);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .admin-badge {
+      background: linear-gradient(90deg, #ffd700, #ffa500);
+      padding: 5px 15px;
+      border-radius: 20px;
+      color: #000;
+      font-weight: bold;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      transition: transform 0.3s;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: #ffd700;
+    }
+    
+    .card-title {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #ffd700;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #ffd700;
+    }
+    
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background: linear-gradient(90deg, #ffd700, #ffa500);
+      border: none;
+      border-radius: 10px;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+    }
+    
+    .users-list {
+      max-height: 400px;
+      overflow-y: auto;
+      margin: 20px 0;
+    }
+    
+    .user-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    }
+    
+    .delete-btn {
+      background: rgba(255, 0, 0, 0.3);
+      color: #ff5555;
+      width: auto;
+      padding: 5px 15px;
+    }
+    
+    .message {
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 10px;
+      display: none;
+    }
+    
+    .success {
+      background: rgba(0, 255, 0, 0.2);
+      border: 1px solid #00ff00;
+      color: #00ff00;
+    }
+    
+    .error {
+      background: rgba(255, 0, 0, 0.2);
+      border: 1px solid #ff0000;
+      color: #ff0000;
+    }
+    
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars" id="stars"></div>
+  
+  <div class="topbar">
+    <div style="display: flex; gap: 15px; align-items: center;">
+      <div class="logo">👑 VPS DARK</div>
+      <div class="admin-badge">⭐ ADMIN</div>
+    </div>
+    <div>
+      <span>مرحباً، <span id="adminName"></span></span>
+      <button onclick="logout()" style="width: auto; margin-left: 15px; background: rgba(255,0,0,0.3); color: white;">🚪 خروج</button>
+    </div>
+  </div>
+  
+  <div class="container">
+    <div class="grid">
+      <!-- إنشاء حساب -->
+      <div class="card">
+        <div class="card-title">➕ إنشاء حساب جديد</div>
+        <input type="text" id="newUsername" placeholder="اسم المستخدم">
+        <input type="password" id="newPassword" placeholder="كلمة المرور">
+        <input type="password" id="confirmPassword" placeholder="تأكيد كلمة المرور">
+        <button onclick="createUser()">✨ إنشاء حساب</button>
+        <div id="message" class="message"></div>
+      </div>
+      
+      <!-- قائمة المستخدمين -->
+      <div class="card">
+        <div class="card-title">👥 المستخدمين <span id="userCount" style="font-size: 14px;"></span></div>
+        <div class="users-list" id="usersList">
+          <div style="text-align: center; padding: 50px;">جاري التحميل...</div>
+        </div>
+        <button onclick="loadUsers()">🔄 تحديث</button>
+      </div>
+    </div>
+    
+    <!-- معلومات -->
+    <div class="card" style="margin-top: 30px;">
+      <div class="card-title">⚙️ معلومات النظام</div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+        <div>
+          <h3 style="color: #ffd700;">📊 الإحصائيات</h3>
+          <p>المستخدمين: <span id="totalUsers">0</span></p>
+          <p>نشطين اليوم: <span id="activeToday">0</span></p>
+        </div>
+        <div>
+          <h3 style="color: #ffd700;">🎯 الصلاحيات</h3>
+          <p>✅ إنشاء حسابات</p>
+          <p>✅ حذف حسابات</p>
+          <p>✅ مراقبة النظام</p>
+        </div>
+        <div>
+          <h3 style="color: #ffd700;">🚀 إجراءات</h3>
+          <button onclick="window.location.href='/'" style="background: rgba(255,215,0,0.2); color: white;">📋 لوحة التحكم</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    let currentAdmin = '';
+    
+    // إنشاء النجوم
+    function createStars() {
+      const starsDiv = document.getElementById('stars');
+      for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.width = Math.random() * 3 + 'px';
+        star.style.height = star.style.width;
+        star.style.animationDelay = Math.random() * 3 + 's';
+        starsDiv.appendChild(star);
+      }
+    }
+    
+    // التحقق من المسؤول
+    async function checkAdmin() {
+      try {
+        const res = await fetch('/api/current_user');
+        const data = await res.json();
+        
+        if (!data.success || !data.is_admin) {
+          window.location.href = '/login';
+          return;
+        }
+        
+        currentAdmin = data.username;
+        document.getElementById('adminName').textContent = currentAdmin;
+        createStars();
+        loadUsers();
+        loadStats();
+      } catch (error) {
+        window.location.href = '/login';
+      }
+    }
+    
+    // إنشاء مستخدم
+    async function createUser() {
+      const username = document.getElementById('newUsername').value.trim();
+      const password = document.getElementById('newPassword').value;
+      const confirm = document.getElementById('confirmPassword').value;
+      
+      if (!username || !password) {
+        showMessage('يرجى ملء جميع الحقول', 'error');
+        return;
+      }
+      
+      if (password.length < 6) {
+        showMessage('كلمة المرور 6 أحرف على الأقل', 'error');
+        return;
+      }
+      
+      if (password !== confirm) {
+        showMessage('كلمة المرور غير متطابقة', 'error');
+        return;
+      }
+      
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+          showMessage('✅ تم إنشاء الحساب بنجاح', 'success');
+          document.getElementById('newUsername').value = '';
+          document.getElementById('newPassword').value = '';
+          document.getElementById('confirmPassword').value = '';
+          loadUsers();
+          loadStats();
+        } else {
+          showMessage('❌ ' + data.message, 'error');
+        }
+      } catch (error) {
+        showMessage('⚠️ خطأ في الاتصال', 'error');
+      }
+    }
+    
+    // تحميل المستخدمين
+    async function loadUsers() {
+      try {
+        const res = await fetch('/api/admin/users');
+        const data = await res.json();
+        
+        if (data.success) {
+          const usersList = document.getElementById('usersList');
+          document.getElementById('userCount').textContent = `(${data.users.length})`;
+          
+          if (data.users.length === 0) {
+            usersList.innerHTML = '<div style="text-align: center; padding: 50px;">📭 لا يوجد مستخدمين</div>';
+          } else {
+            usersList.innerHTML = data.users.map(user => `
+              <div class="user-item">
+                <div>
+                  <strong>${user.username}</strong><br>
+                  <small style="color: #aaa;">أنشئ: ${new Date(user.created_at).toLocaleDateString('ar-SA')}</small>
+                </div>
+                <button class="delete-btn" onclick="deleteUser('${user.username}')">🗑️ حذف</button>
+              </div>
+            `).join('');
+          }
+        }
+      } catch (error) {
+        console.error('Error loading users:', error);
+      }
+    }
+    
+    // حذف مستخدم
+    async function deleteUser(username) {
+      if (!confirm(`⚠️ هل تريد حذف المستخدم "${username}"؟ هذا الإجراء لا يمكن التراجع عنه!`)) {
+        return;
+      }
+      
+      try {
+        const res = await fetch('/api/admin/delete-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username })
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+          showMessage(`✅ تم حذف ${username}`, 'success');
+          loadUsers();
+          loadStats();
+        } else {
+          showMessage('❌ ' + data.message, 'error');
+        }
+      } catch (error) {
+        showMessage('⚠️ خطأ في الحذف', 'error');
+      }
+    }
+    
+    // تحميل الإحصائيات
+    async function loadStats() {
+      try {
+        const res = await fetch('/api/admin/users');
+        const data = await res.json();
+        
+        if (data.success) {
+          document.getElementById('totalUsers').textContent = data.users.length;
+          
+          const today = new Date().toLocaleDateString();
+          const activeToday = data.users.filter(user => {
+            const created = new Date(user.created_at).toLocaleDateString();
+            return created === today;
+          }).length;
+          
+          document.getElementById('activeToday').textContent = activeToday;
+        }
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
+    
+    // عرض رسالة
+    function showMessage(text, type) {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = `message ${type}`;
+      msg.style.display = 'block';
+      
+      setTimeout(() => {
+        msg.style.display = 'none';
+      }, 3000);
+    }
+    
+    // تسجيل الخروج
+    async function logout() {
+      if (confirm('هل تريد تسجيل الخروج؟')) {
+        await fetch('/api/logout', { method: 'POST' });
+        window.location.href = '/login';
+      }
+    }
+    
+    // تشغيل
+    document.addEventListener('DOMContentLoaded', checkAdmin);
+  </script>
+</body>
+</html>
